@@ -2,10 +2,10 @@ import streamlit as st
 import joblib
 import numpy as np
 
-pipeline = joblib.load('/Users/danirubio/desktop/pipeline_transformer.sav')
-lr_model = joblib.load('/Users/danirubio/desktop/lr_model.sav')
-svm_model = joblib.load('/Users/danirubio/desktop/svm_model.sav')
-dt_model = joblib.load('/Users/danirubio/desktop/dt_model.sav')
+pipeline = joblib.load('pipeline_transformer.sav')
+lr_model = joblib.load('lr_model.sav')
+svm_model = joblib.load('svm_model.sav')
+dt_model = joblib.load('dt_model.sav')
 
 
 st.title("Bienvenid@ a tu app para clasificación de Flores Iris ")
@@ -20,32 +20,21 @@ pet_width = float(st.number_input('Ancho del petalo',min_value=0.0, max_value=20
 model_option = st.selectbox("Seleccione el modelo", ["Regresión Logística", "SVM", "Árbol de Decisión"])
 
 def get_prediction(model, features):
-    if model in ['SVM', 'Logistic Regression']:
-        features = pipeline.transform(features)
+    features = pipeline.transform(features)
     prediction = model.predict(features)
     return prediction
-
-
-# Mapeo de etiquetas numéricas a nombres
-class_map = {
-    0: "Iris Setosa",
-    1: "Iris Versicolor",
-    2: "Iris Virginica"
-}
-
 
 btn = st.button('Classify')
 
 st.title("Predicción de tipos de flores Iris")
 
 # Botón para realizar la predicción
-if st.btn("Classify"):
+if btn:
     features = ([[sp_length, sp_width, pet_length, pet_width]])
     if model_option== "SVM":
         prediction = get_prediction(svm_model, features)
-    elif model_option == "Logistic Regression":
+    elif model_option == "Regresión Logística":
         prediction = get_prediction(lr_model, features)
-    else:
+    elif model_option == "Árbol de Decisión":
         prediction = get_prediction(dt_model, features)
-
-    st.write(f"La flor es de tipo: {class_map[prediction[0]]}")
+    st.write(f"La flor es de tipo: {prediction[0]}")
